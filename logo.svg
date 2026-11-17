@@ -1,11 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">CEM PROFIT</title>
+  <desc id="desc">A minimal geometric CEM monogram</desc>
   <defs>
-    <linearGradient id="cem" x1="8" y1="5" x2="56" y2="59" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#A3EFDF"/>
-      <stop offset="1" stop-color="#42C8B1"/>
+    <linearGradient id="mark" x1="8" y1="7" x2="56" y2="57" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#d0d9e2"/>
+      <stop offset="1" stop-color="#7f96ad"/>
     </linearGradient>
   </defs>
-  <path d="M32 4.5 55.8 18.2v27.6L32 59.5 8.2 45.8V18.2L32 4.5Z" fill="#0B1220" stroke="url(#cem)" stroke-width="2"/>
-  <path d="M42.5 22.5a14 14 0 1 0 0 19" stroke="url(#cem)" stroke-width="5" stroke-linecap="round"/>
-  <path d="M28 26h13M28 38h13" stroke="url(#cem)" stroke-width="3" stroke-linecap="round"/>
+  <rect x="3" y="3" width="58" height="58" rx="17" fill="#17212c" stroke="#526477" stroke-opacity=".45"/>
+  <path d="M39.8 19.8a15 15 0 1 0 0 24.4" fill="none" stroke="url(#mark)" stroke-width="5.2" stroke-linecap="round"/>
+  <path d="M29 23h16M29 41h16M29 32h12" fill="none" stroke="url(#mark)" stroke-width="3.4" stroke-linecap="round"/>
 </svg>

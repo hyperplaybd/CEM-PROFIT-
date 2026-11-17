@@ -1,0 +1,972 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1220">
+  <meta name="description" content="CEM PROFIT — Trading account, plans and referrals">
+  <link rel="icon" href="/logo.svg" type="image/svg+xml">
+  <title>CEM PROFIT — Digital Asset Account</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1220;
+      --surface: #111c2d;
+      --surface-2: #152338;
+      --surface-3: #1b2b42;
+      --line: rgba(185, 205, 225, .12);
+      --text: #edf4fa;
+      --muted: #93a4b8;
+      --soft: #bdc9d6;
+      --accent: #83e2d0;
+      --accent-strong: #46cdb5;
+      --blue: #8ab8ff;
+      --success: #83e2d0;
+      --danger: #ff9198;
+      --warning: #f1c97d;
+      --radius: 20px;
+      --shadow: 0 20px 60px rgba(0, 0, 0, .22);
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); scroll-behavior: smooth; }
+    body {
+      margin: 0; min-height: 100vh; color: var(--text);
+      background:
+        radial-gradient(ellipse at 85% 0%, rgba(70, 205, 181, .09), transparent 32rem),
+        radial-gradient(ellipse at 0% 44%, rgba(75, 122, 190, .08), transparent 30rem),
+        var(--bg);
+      font-family: Inter, "Segoe UI", Roboto, system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: calc(88px + env(safe-area-inset-bottom));
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .app-shell { width: min(1120px, 100%); margin: 0 auto; padding: 22px 24px 40px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 34px; }
+    .brand { display: inline-flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-mark { width: 46px; height: 46px; flex: 0 0 46px; filter: drop-shadow(0 7px 18px rgba(70,205,181,.14)); }
+    .brand-copy { min-width: 0; }
+    .brand-name { font-size: 15px; letter-spacing: .19em; font-weight: 800; line-height: 1.25; }
+    .brand-sub { margin-top: 3px; font-size: 10px; letter-spacing: .12em; color: var(--muted); text-transform: uppercase; }
+    .top-meta { display: flex; align-items: center; gap: 10px; }
+    .network-chip { display: inline-flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid var(--line); border-radius: 999px; color: var(--soft); background: rgba(17,28,45,.68); font-size: 11px; letter-spacing: .04em; }
+    .network-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px rgba(131,226,208,.09); }
+    .profile { height: 38px; min-width: 38px; padding: 0 10px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 12px; color: var(--soft); background: var(--surface); font-size: 12px; }
+    .page-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 21px; }
+    .eyebrow { color: var(--accent); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .17em; margin-bottom: 8px; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { font-size: clamp(24px, 4vw, 32px); line-height: 1.2; letter-spacing: -.035em; margin-bottom: 7px; font-weight: 750; }
+    .heading-note { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0; }
+    .section { display: none; animation: sectionIn .34s ease both; }
+    .section.active { display: block; }
+    @keyframes sectionIn { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
+    .overview-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(280px, .85fr); gap: 18px; }
+    .balance-card {
+      position: relative; overflow: hidden; min-height: 230px; padding: 28px;
+      border: 1px solid rgba(131,226,208,.2); border-radius: 23px;
+      background: linear-gradient(120deg, rgba(26,53,69,.96), rgba(17,37,54,.96) 58%, rgba(20,38,59,.98));
+      box-shadow: var(--shadow);
+    }
+    .balance-card::before { content: ""; position: absolute; width: 300px; height: 300px; right: -115px; top: -155px; border: 1px solid rgba(131,226,208,.16); border-radius: 50%; box-shadow: 0 0 0 28px rgba(131,226,208,.025), 0 0 0 58px rgba(131,226,208,.02); animation: orbitGlow 9s ease-in-out infinite alternate; }
+    .balance-card::after { content: ""; position: absolute; width: 190px; height: 190px; right: 35px; bottom: -145px; border-radius: 50%; background: rgba(70,205,181,.12); filter: blur(35px); }
+    @keyframes orbitGlow { from { transform: translate(0,0) scale(.96); opacity: .6; } to { transform: translate(-12px,18px) scale(1.04); opacity: 1; } }
+    .balance-top, .balance-value, .balance-foot { position: relative; z-index: 1; }
+    .balance-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #c0d2d8; font-size: 12px; }
+    .balance-label { display: inline-flex; align-items: center; gap: 8px; }
+    .balance-label svg { width: 16px; height: 16px; color: var(--accent); }
+    .account-state { border: 1px solid rgba(131,226,208,.22); border-radius: 999px; padding: 6px 10px; color: var(--accent); font-size: 10px; letter-spacing: .04em; }
+    .balance-value { margin: 27px 0 28px; display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap; }
+    .balance-value strong { font-size: clamp(34px, 5vw, 48px); font-weight: 700; letter-spacing: -.05em; line-height: 1; }
+    .balance-value span { color: #c0d2d8; font-size: 13px; letter-spacing: .08em; }
+    .balance-foot { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding-top: 15px; border-top: 1px solid rgba(220,240,245,.12); color: #b7c9d3; font-size: 11px; }
+    .balance-foot strong { color: var(--text); font-weight: 600; }
+    .quick-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; }
+    .action-card { display: flex; align-items: center; gap: 12px; min-height: 76px; padding: 15px; border: 1px solid var(--line); border-radius: 16px; text-align: left; color: var(--text); background: rgba(17,28,45,.8); transition: border-color .2s, transform .2s, background .2s; }
+    .action-card:hover { transform: translateY(-2px); border-color: rgba(131,226,208,.35); background: var(--surface-2); }
+    .action-icon { width: 37px; height: 37px; flex: 0 0 37px; display: grid; place-items: center; border-radius: 12px; background: rgba(131,226,208,.1); color: var(--accent); }
+    .action-icon svg { width: 18px; height: 18px; }
+    .action-copy strong { display: block; font-size: 12px; font-weight: 650; }
+    .action-copy small { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
+    .panel { padding: 22px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(17,28,45,.82); box-shadow: 0 12px 34px rgba(0,0,0,.1); }
+    .panel + .panel { margin-top: 16px; }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
+    .panel-title { font-size: 14px; font-weight: 700; margin: 0; letter-spacing: -.01em; }
+    .panel-subtitle { color: var(--muted); font-size: 11px; line-height: 1.55; margin: 5px 0 0; }
+    .text-link { padding: 4px; border: 0; color: var(--accent); background: transparent; font-size: 11px; }
+    .asset-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+    .asset-row:last-child { border-bottom: 0; padding-bottom: 0; }
+    .asset-left { display: flex; align-items: center; gap: 11px; }
+    .asset-symbol { width: 37px; height: 37px; display: grid; place-items: center; border-radius: 12px; color: var(--accent); background: rgba(131,226,208,.09); }
+    .asset-symbol svg { width: 18px; height: 18px; }
+    .asset-name strong { display: block; font-size: 12px; }
+    .asset-name small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+    .asset-amount { font-size: 12px; font-weight: 650; text-align: right; }
+    .asset-amount small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; font-weight: 400; }
+    .security-note { display: flex; gap: 10px; padding: 14px; border: 1px solid rgba(138,184,255,.15); border-radius: 14px; background: rgba(65,103,155,.08); color: #b7c8de; font-size: 11px; line-height: 1.6; }
+    .security-note svg { width: 17px; height: 17px; flex: 0 0 17px; margin-top: 1px; color: var(--blue); }
+    .form-panel { max-width: 760px; }
+    .form-label { display: block; margin: 19px 0 8px; color: #c1ceda; font-size: 11px; font-weight: 650; }
+    .input-wrap { position: relative; }
+    .field { width: 100%; min-height: 49px; padding: 13px 15px; border: 1px solid rgba(185,205,225,.17); border-radius: 12px; outline: none; color: var(--text); background: #0d1726; font-size: 12px; transition: border-color .2s, box-shadow .2s; }
+    .field::placeholder { color: #64778d; }
+    .field:focus { border-color: rgba(131,226,208,.55); box-shadow: 0 0 0 3px rgba(131,226,208,.08); }
+    .field.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; letter-spacing: .01em; }
+    .wallet-box { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 14px; background: #0d1726; }
+    .wallet-box code { flex: 1; min-width: 0; color: #c7d6e4; font-size: 11px; line-height: 1.6; overflow-wrap: anywhere; }
+    .copy-button { height: 36px; flex: 0 0 auto; display: inline-flex; align-items: center; gap: 7px; padding: 0 11px; border: 1px solid rgba(131,226,208,.22); border-radius: 10px; color: var(--accent); background: rgba(131,226,208,.07); font-size: 10px; }
+    .copy-button svg { width: 14px; height: 14px; }
+    .info-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+    .info-cell { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: rgba(11,18,32,.42); }
+    .info-cell small { display: block; color: var(--muted); font-size: 10px; }
+    .info-cell strong { display: block; margin-top: 5px; font-size: 11px; font-weight: 650; }
+    .primary-button { min-height: 47px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 0 19px; border: 1px solid rgba(131,226,208,.42); border-radius: 12px; color: #09221f; background: linear-gradient(115deg, #a0eddf, #68d8c5); box-shadow: 0 8px 22px rgba(70,205,181,.13); font-size: 12px; font-weight: 750; transition: transform .2s, filter .2s, box-shadow .2s; }
+    .primary-button:hover { transform: translateY(-1px); filter: brightness(1.04); box-shadow: 0 10px 27px rgba(70,205,181,.18); }
+    .primary-button:disabled { cursor: wait; opacity: .62; transform: none; }
+    .primary-button svg { width: 16px; height: 16px; }
+    .button-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+    .secondary-button { min-height: 42px; padding: 0 15px; border: 1px solid var(--line); border-radius: 11px; color: var(--soft); background: rgba(255,255,255,.025); font-size: 11px; }
+    .status-box { display: none; align-items: flex-start; gap: 11px; margin-top: 17px; padding: 13px 14px; border: 1px solid var(--line); border-radius: 13px; background: rgba(11,18,32,.62); }
+    .status-box.show { display: flex; animation: sectionIn .2s ease both; }
+    .status-box.success { border-color: rgba(131,226,208,.26); background: rgba(38,113,98,.1); }
+    .status-box.error { border-color: rgba(255,145,152,.24); background: rgba(128,48,61,.1); }
+    .status-box.pending { border-color: rgba(241,201,125,.22); background: rgba(130,98,40,.09); }
+    .status-icon { width: 18px; height: 18px; flex: 0 0 18px; margin-top: 1px; }
+    .status-text strong { display: block; margin-bottom: 3px; font-size: 11px; }
+    .status-text span { display: block; color: var(--muted); font-size: 10px; line-height: 1.6; }
+    .spinner { width: 15px; height: 15px; border: 2px solid rgba(241,201,125,.25); border-top-color: var(--warning); border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .history-list { display: grid; gap: 9px; }
+    .history-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+    .history-item:last-child { border-bottom: 0; }
+    .history-left { display: flex; align-items: center; gap: 11px; min-width: 0; }
+    .history-icon { width: 35px; height: 35px; flex: 0 0 35px; display: grid; place-items: center; border-radius: 11px; color: var(--accent); background: rgba(131,226,208,.08); }
+    .history-icon.withdraw { color: var(--blue); background: rgba(138,184,255,.08); }
+    .history-icon svg { width: 17px; height: 17px; }
+    .history-name { font-size: 11px; font-weight: 650; }
+    .history-ref { max-width: min(42vw, 300px); margin-top: 4px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: ui-monospace, monospace; font-size: 9px; }
+    .history-right { flex: 0 0 auto; text-align: right; }
+    .history-amount { font-size: 11px; font-weight: 700; }
+    .history-status { margin-top: 4px; color: var(--muted); font-size: 9px; text-transform: capitalize; }
+    .empty-state { padding: 28px 12px; color: var(--muted); text-align: center; font-size: 11px; line-height: 1.65; }
+    .empty-state svg { width: 25px; height: 25px; display: block; margin: 0 auto 9px; color: #6f839a; }
+    .bottom-nav { position: fixed; z-index: 10; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: linear-gradient(180deg, rgba(11,18,32,0), rgba(11,18,32,.92) 20%, rgba(11,18,32,.98)); backdrop-filter: blur(18px); }
+    .nav-inner { width: min(720px, 100%); display: flex; gap: 5px; padding: 6px; border: 1px solid var(--line); border-radius: 17px; background: rgba(17,28,45,.96); box-shadow: 0 14px 42px rgba(0,0,0,.28); overflow-x: auto; scrollbar-width: none; }
+    .nav-inner::-webkit-scrollbar { display:none; }
+    .nav-button { flex: 1 0 70px; min-width:70px; min-height:52px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; border:0; border-radius:12px; color:#8091a5; background:transparent; font-size:9px; transition:color .18s,background .18s; }
+    .nav-button svg { width: 17px; height: 17px; }
+    .nav-button.active { color: var(--accent); background: rgba(131,226,208,.09); }
+    .footer-note { padding: 22px 4px 0; color: #697c92; text-align: center; font-size: 9px; letter-spacing: .02em; }
+    .toast { position: fixed; z-index: 30; left: 50%; bottom: calc(94px + env(safe-area-inset-bottom)); max-width: calc(100vw - 32px); padding: 11px 15px; border: 1px solid rgba(131,226,208,.22); border-radius: 11px; color: var(--text); background: #17283a; box-shadow: var(--shadow); font-size: 11px; opacity: 0; transform: translate(-50%, 8px); pointer-events: none; transition: opacity .2s, transform .2s; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .loading-screen { min-height: 52vh; display: grid; place-items: center; color: var(--muted); text-align: center; }
+    .loading-screen .spinner { width: 23px; height: 23px; margin: 0 auto 13px; border-color: rgba(131,226,208,.18); border-top-color: var(--accent); }
+    .gate { position: fixed; z-index: 100; inset: 0; display: none; place-items: center; padding: 28px; background: rgba(7,13,23,.97); text-align: center; }
+    .gate.show { display: grid; }
+    .gate-card { width: min(380px, 100%); padding: 32px 24px; border: 1px solid var(--line); border-radius: 22px; background: var(--surface); }
+    .gate-card .brand-mark { width: 58px; height: 58px; margin-bottom: 17px; }
+    .gate-card h2 { font-size: 20px; margin-bottom: 8px; }
+    .gate-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+    .risk-banner {
+      display: flex; align-items: flex-start; gap: 10px; margin: -12px 0 24px;
+      padding: 13px 15px; border: 1px solid rgba(241,201,125,.32); border-radius: 14px;
+      color: #f2dba9; background: rgba(130,98,40,.12); font-size: 11px; line-height: 1.65;
+    }
+    .risk-banner svg { width: 18px; height: 18px; flex: 0 0 18px; margin-top: 1px; color: var(--warning); }
+    .risk-banner strong { color: #ffe9b8; }
+    .plans-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .plan-card { min-width: 0; padding: 15px; border: 1px solid var(--line); border-radius: 15px; background: rgba(11,18,32,.44); }
+    .plan-card-top { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px; }
+    .plan-card-label { color:var(--muted); font-size:10px; }
+    .plan-amount { margin:0 0 10px; font-size:21px; font-weight:750; letter-spacing:-.04em; }
+    .plan-amount small { color:var(--muted); font-size:10px; font-weight:500; letter-spacing:0; }
+    .plan-meta { display:grid; gap:7px; padding:10px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+    .plan-meta-row { display:flex; justify-content:space-between; gap:8px; color:var(--muted); font-size:10px; }
+    .plan-meta-row strong { color:var(--soft); font-weight:650; text-align:right; }
+    .plan-estimate { margin-top:9px; padding:9px 10px; border:1px solid rgba(131,226,208,.16); border-radius:10px; background:rgba(131,226,208,.045); }
+    .plan-estimate-row { display:flex; justify-content:space-between; gap:8px; color:var(--muted); font-size:10px; line-height:1.7; }
+    .plan-estimate-row strong { color:var(--accent); font-weight:700; text-align:right; }
+    .plan-buy { width:100%; min-height:39px; margin-top:11px; border:1px solid rgba(131,226,208,.28); border-radius:10px; color:var(--accent); background:rgba(131,226,208,.08); font-size:11px; font-weight:700; }
+    .plan-buy:hover { background:rgba(131,226,208,.14); }
+    .plan-buy:disabled { opacity:.55; cursor:not-allowed; }
+    .mini-stat-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:14px 0; }
+    .mini-stat { padding:14px 12px; border:1px solid var(--line); border-radius:13px; background:rgba(11,18,32,.42); }
+    .mini-stat small { display:block; color:var(--muted); font-size:10px; }
+    .mini-stat strong { display:block; margin-top:6px; font-size:20px; font-weight:750; }
+    .commission-card { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:17px; border:1px solid rgba(131,226,208,.2); border-radius:15px; background:linear-gradient(115deg,rgba(26,53,69,.78),rgba(17,37,54,.72)); }
+    .commission-card small { display:block; color:var(--muted); font-size:10px; }
+    .commission-card strong { display:block; margin-top:5px; font-size:24px; letter-spacing:-.04em; }
+    .referral-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); }
+    .referral-row:last-child { border-bottom:0; }
+    .referral-name { min-width:0; font-size:11px; font-weight:650; overflow-wrap:anywhere; }
+    .referral-detail { margin-top:4px; color:var(--muted); font-size:10px; }
+    .pill-status { flex:0 0 auto; padding:5px 8px; border:1px solid var(--line); border-radius:999px; color:var(--muted); font-size:9px; }
+    .pill-status.success { color:var(--success); border-color:rgba(131,226,208,.22); }
+    .pill-status.pending { color:var(--warning); border-color:rgba(241,201,125,.22); }
+    .terms-copy { color:#c2cfdb; font-size:12px; line-height:1.8; }
+    .terms-copy h3 { margin:19px 0 7px; color:var(--text); font-size:13px; }
+    .terms-copy p { margin-bottom:10px; }
+    .terms-copy ol { padding-left:20px; }
+    .terms-copy li { margin:7px 0; }
+    .inline-field { display:flex; gap:8px; align-items:center; }
+    .inline-field .field { min-width:0; }
+    .inline-field .copy-button { min-height:49px; }
+    .source-select { width:100%; min-height:45px; padding:10px 12px; border:1px solid rgba(185,205,225,.17); border-radius:11px; color:var(--text); background:#0d1726; font-size:11px; }
+    .section-note { margin-top:12px; color:var(--muted); font-size:10px; line-height:1.65; }
+    .loading-inline { padding:17px; color:var(--muted); text-align:center; font-size:11px; }
+
+    @media (max-width: 780px) {
+      .app-shell { padding: 17px 16px 30px; }
+      .topbar { margin-bottom: 27px; }
+      .overview-grid { grid-template-columns: 1fr; }
+      .plans-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .balance-card { min-height: 210px; }
+      .overview-side { display: grid; grid-template-columns: 1fr; }
+    }
+    @media (max-width: 420px) {
+      .brand-mark { width: 40px; height: 40px; flex-basis: 40px; }
+      .brand-name { font-size: 13px; }
+      .brand-sub { font-size: 9px; }
+      .network-chip { padding: 8px 9px; font-size: 9px; }
+      .profile { min-width: 34px; height: 34px; }
+      .page-heading { align-items: flex-start; }
+      .balance-card { padding: 22px 19px; }
+      .panel { padding: 18px; }
+      .quick-actions { gap: 9px; }
+      .action-card { padding: 12px 10px; gap: 9px; }
+      .action-icon { width: 33px; height: 33px; flex-basis: 33px; }
+      .action-copy strong { font-size: 11px; }
+      .action-copy small { font-size: 9px; }
+      .info-grid { grid-template-columns: 1fr 1fr; }
+      .plans-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .mini-stat-grid { gap:7px; }
+      .mini-stat { padding:11px 9px; }
+      .mini-stat strong { font-size:17px; }
+      .inline-field { align-items:stretch; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+
+    /* Refined, restrained visual system */
+    :root {
+      --bg: #10151c; --surface: #171f29; --surface-2: #1d2733; --surface-3: #263343;
+      --line: rgba(190,205,220,.12); --text: #e8edf3; --muted: #9aa8b7; --soft: #c5cfda;
+      --accent: #a8b9cb; --accent-strong: #8fa5bc; --blue: #91abc7;
+      --success: #8fc7a6; --danger: #dc9297; --warning: #d9b77c;
+      --shadow: 0 18px 48px rgba(0,0,0,.20);
+    }
+    body { background: radial-gradient(ellipse at 90% 0%, rgba(122,145,169,.07), transparent 34rem), #10151c; }
+    .balance-card { border-color: rgba(168,185,203,.18); background: linear-gradient(125deg,#263442,#1c2937 60%,#202d3b); }
+    .balance-card::before { opacity:.45; animation-duration:18s; }
+    .panel { background: rgba(23,31,41,.94); }
+    .action-card:hover { border-color: rgba(168,185,203,.3); }
+    .action-icon, .history-icon, .nav-button.active { color: var(--accent); background: rgba(168,185,203,.09); }
+    .primary-button { background: #d0d9e2; color: #18212b; border-color: #d0d9e2; font-weight:750; }
+    .primary-button:hover:not(:disabled) { background:#e1e7ed; }
+    .primary-button:disabled { opacity:.45; cursor:not-allowed; }
+    .plan-card { background:#141c25; transition: transform .2s ease, border-color .2s ease, background .2s ease; }
+    .plan-card:hover { transform:translateY(-2px); border-color:rgba(168,185,203,.28); background:#18222d; }
+    .plan-card-top svg { width:17px; height:17px; color:var(--accent); }
+    .plan-card-note { margin:11px 0 0; color:var(--muted); font-size:10px; line-height:1.55; min-height:31px; }
+    .claim-panel { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:17px; margin:0 0 15px; border:1px solid var(--line); border-radius:15px; background:#141c25; }
+    .claim-copy { display:grid; gap:5px; min-width:0; }
+    .claim-copy .eyebrow { margin:0; color:var(--muted); }
+    .claim-copy strong { font-size:25px; letter-spacing:-.04em; }
+    .claim-copy small { color:var(--muted); font-size:10px; line-height:1.5; }
+    .claim-panel .primary-button { flex:0 0 auto; min-height:42px; padding:0 17px; }
+    .admin-settlement { margin:0 0 15px; border-color:rgba(217,183,124,.22); background:#171e27; box-shadow:none; }
+    .admin-settlement[hidden] { display:none; }
+    .admin-fields { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    @media(max-width:520px) { .admin-fields { grid-template-columns:1fr; } }
+    @media(max-width:520px) { .claim-panel { align-items:flex-start; flex-direction:column; } .claim-panel .primary-button { width:100%; } }
+    @media(prefers-reduced-motion:reduce) { .balance-card::before { animation:none; } }
+
+  </style>
+</head>
+<body>
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute;overflow:hidden">
+    <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H20v15H6.5A2.5 2.5 0 0 1 4 16.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M4 7h14.5A1.5 1.5 0 0 1 20 8.5V12h-5a2 2 0 0 0 0 4h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M15 14h.01" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="M12 4v15m-6-6 6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 20V5m-6 6 6-6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="4" width="6" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="4" y="14" width="6" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="14" width="6" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 7v5l3.3 2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 19 6v5.6c0 4.2-2.8 7.4-7 9.4-4.2-2-7-5.2-7-9.4V6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="11" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M16 8V5a1.5 1.5 0 0 0-1.5-1.5h-8A1.5 1.5 0 0 0 5 5v11.5A1.5 1.5 0 0 0 6.5 18H8" fill="none" stroke="currentColor" stroke-width="1.7"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M13 5h6v6m0-6-9 9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M18 13v4.5A1.5 1.5 0 0 1 16.5 19h-10A1.5 1.5 0 0 1 5 17.5v-10A1.5 1.5 0 0 1 6.5 6H11" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4 21 20H3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 9v5m0 3h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-empty" viewBox="0 0 24 24"><path d="M4 7.5h16v12H4zM4 7.5 6.5 4h11L20 7.5M8 12h8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></symbol>
+    <symbol id="i-trending" viewBox="0 0 24 24"><path d="M4 18V6m0 12h16M7 14l4-4 3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 6h5v5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0M16 5.5a3 3 0 0 1 0 5.8M17 14a4.8 4.8 0 0 1 3.5 4.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M7 3.5h7l4 4V20a.5.5 0 0 1-.5.5h-11A.5.5 0 0 1 6 20V4.5a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 3.5V8h4M9 12h6m-6 3.5h6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  </svg>
+
+  <div class="gate" id="telegramGate" aria-live="polite">
+    <div class="gate-card">
+      <svg class="brand-mark" viewBox="0 0 64 64" role="img" aria-label="CEM logo">
+        <defs><linearGradient id="gateLogo" x1="8" y1="5" x2="54" y2="59" gradientUnits="userSpaceOnUse"><stop stop-color="#a3efdf"/><stop offset="1" stop-color="#42c8b1"/></linearGradient></defs>
+        <path d="M32 4.5 55.8 18.2v27.6L32 59.5 8.2 45.8V18.2L32 4.5Z" fill="none" stroke="url(#gateLogo)" stroke-width="2"/>
+        <path d="M42.5 22.5a14 14 0 1 0 0 19" fill="none" stroke="url(#gateLogo)" stroke-width="5" stroke-linecap="round"/>
+        <path d="M28 26h13M28 38h13" stroke="url(#gateLogo)" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <h2>Open in Telegram</h2>
+      <p>For secure account verification, open the CEM PROFIT Mini App from Telegram.</p>
+    </div>
+  </div>
+
+  <div class="app-shell" id="appShell" style="display:none">
+    <header class="topbar">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 64 64" role="img" aria-label="CEM PROFIT logo">
+          <defs><linearGradient id="brandLogo" x1="8" y1="5" x2="54" y2="59" gradientUnits="userSpaceOnUse"><stop stop-color="#a3efdf"/><stop offset="1" stop-color="#42c8b1"/></linearGradient></defs>
+          <path d="M32 4.5 55.8 18.2v27.6L32 59.5 8.2 45.8V18.2L32 4.5Z" fill="rgba(131,226,208,.035)" stroke="url(#brandLogo)" stroke-width="2"/>
+          <path d="M42.5 22.5a14 14 0 1 0 0 19" fill="none" stroke="url(#brandLogo)" stroke-width="5" stroke-linecap="round"/>
+          <path d="M28 26h13M28 38h13" stroke="url(#brandLogo)" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <div class="brand-copy">
+          <div class="brand-name">CEM PROFIT</div>
+          <div class="brand-sub">Digital Asset Account</div>
+        </div>
+      </div>
+      <div class="top-meta">
+        <div class="network-chip"><span class="network-dot"></span> BNB SMART CHAIN</div>
+        <div class="profile" id="profileInitials" aria-label="Account">CP</div>
+      </div>
+    </header>
+
+    <main>
+      <section class="section active" id="overviewSection" data-section="overview">
+        <div class="page-heading">
+          <div><div class="eyebrow">ACCOUNT OVERVIEW</div><h1>Account overview</h1><p class="heading-note">Your balance and account activity in one place.</p></div>
+        </div>
+        <div class="overview-grid">
+          <div>
+            <article class="balance-card">
+              <div class="balance-top">
+                <span class="balance-label"><svg><use href="#i-wallet"/></svg> Total balance</span>
+                <span class="account-state">ACCOUNT ACTIVE</span>
+              </div>
+              <div class="balance-value"><strong id="balanceValue">0.0000</strong><span>USDT</span></div>
+              <div class="balance-foot"><span>Available balance</span><strong id="availableValue">0.0000 USDT</strong></div>
+            </article>
+            <div class="quick-actions">
+              <button class="action-card" data-go="deposit" type="button">
+                <span class="action-icon"><svg><use href="#i-arrow-down"/></svg></span>
+                <span class="action-copy"><strong>Deposit</strong><small>Add USDT</small></span>
+              </button>
+              <button class="action-card" data-go="withdraw" type="button">
+                <span class="action-icon"><svg><use href="#i-arrow-up"/></svg></span>
+                <span class="action-copy"><strong>Withdraw</strong><small>Submit a request</small></span>
+              </button>
+            </div>
+            <div class="quick-actions">
+              <button class="action-card" data-go="plans" type="button">
+                <span class="action-icon"><svg><use href="#i-trending"/></svg></span>
+                <span class="action-copy"><strong>Trading plans</strong><small>Explore 14 plans</small></span>
+              </button>
+              <button class="action-card" data-go="referrals" type="button">
+                <span class="action-icon"><svg><use href="#i-users"/></svg></span>
+                <span class="action-copy"><strong>Referrals & commission</strong><small>Your invitations and rewards</small></span>
+              </button>
+            </div>
+          </div>
+          <div class="overview-side">
+            <article class="panel">
+              <div class="panel-head"><div><h2 class="panel-title">Asset</h2><p class="panel-subtitle">Your current account assets</p></div></div>
+              <div class="asset-row">
+                <div class="asset-left"><span class="asset-symbol"><svg><use href="#i-wallet"/></svg></span><span class="asset-name"><strong>USDT</strong><small>BEP-20 · BNB Chain</small></span></div>
+                <div class="asset-amount"><span id="assetBalance">0.0000</span><small>USDT</small></div>
+              </div>
+              <div class="asset-row">
+                <div class="asset-left"><span class="asset-symbol"><svg><use href="#i-clock"/></svg></span><span class="asset-name"><strong>Processing</strong><small>Withdrawal request</small></span></div>
+                <div class="asset-amount"><span id="reservedBalance">0.0000</span><small>USDT</small></div>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-head"><div><h2 class="panel-title">Recent activity</h2><p class="panel-subtitle">Latest account updates</p></div><button class="text-link" data-go="history" type="button">View all</button></div>
+              <div id="recentActivity" class="history-list"><div class="empty-state">No account activity yet.</div></div>
+            </article>
+          </div>
+        </div>
+        <div class="footer-note">CEM PROFIT · Secure account interface</div>
+      </section>
+
+
+      <section class="section" id="plansSection" data-section="plans">
+        <div class="page-heading"><div><div class="eyebrow">TRADING PLANS</div><h1>Trading plans</h1><p class="heading-note">Choose a plan that suits your needs. Each plan runs for 10 days.</p></div></div>
+        <article class="panel">
+          <div class="panel-head"><div><h2 class="panel-title">Available plans</h2><p class="panel-subtitle">Select the plan amount that fits your account. Each plan runs for 10 days.</p></div></div>
+          <label class="form-label" for="planPurchaseSource">Payment source</label>
+          <select class="source-select" id="planPurchaseSource"><option value="main">Main balance</option><option value="commission">Commission balance</option></select>
+          <div id="plansGrid" class="plans-grid" style="margin-top:14px"><div class="loading-inline">Loading plans…</div></div>
+          <p class="section-note">Any claimable amount is based on verified trading results recorded by the administrator. Returns are variable and are not guaranteed.</p>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><div><h2 class="panel-title">My plans</h2><p class="panel-subtitle">Track your plan status and verified trading results here.</p></div><button class="text-link" id="refreshPlans" type="button">Refresh</button></div>
+          <div class="info-grid" style="margin:0 0 14px">
+            <div class="info-cell"><small>Total plan principal</small><strong id="planTotalCapital">0.0000 USDT</strong></div>
+            <div class="info-cell"><small>Total realized profit</small><strong id="planTotalPnl">Awaiting verified results</strong></div>
+          </div>
+          <div class="claim-panel">
+            <div class="claim-copy"><span class="eyebrow">PROFIT CLAIM</span><strong><span id="claimableProfit">0.0000</span> USDT</strong><small id="claimWindowText">Verified profit will appear here when recorded.</small></div>
+            <button class="primary-button" id="claimProfitButton" type="button" disabled>Claim profit</button>
+          </div>
+          <article class="panel admin-settlement" id="adminProfitPanel" hidden>
+            <div class="panel-head"><div><h2 class="panel-title">Admin · Record verified profit</h2><p class="panel-subtitle">Record positive realized profit from verified trading results. Each plan and period can be recorded once.</p></div></div>
+            <label class="form-label" for="adminPlanSelect">Plan</label>
+            <select class="source-select" id="adminPlanSelect"><option value="">Loading plans…</option></select>
+            <div class="admin-fields">
+              <div><label class="form-label" for="adminProfitAmount">Verified profit (USDT)</label><input class="field" id="adminProfitAmount" type="number" min="0.000000000000000001" step="0.000000000000000001" placeholder="e.g. 0.025"></div>
+              <div><label class="form-label" for="adminPeriodKey">Period key</label><input class="field" id="adminPeriodKey" type="text" maxlength="64" placeholder="e.g. 2026-11-17"></div>
+            </div>
+            <div class="button-row"><button class="primary-button" id="recordProfitButton" type="button">Record profit</button></div>
+            <div class="status-box" id="adminProfitStatus" role="status" aria-live="polite"><div class="status-icon"></div><div class="status-text"><strong></strong><span></span></div></div>
+          </article>
+          <div id="myPlansList" class="history-list"><div class="empty-state">You have not purchased a plan yet.</div></div>
+        </article>
+      </section>
+
+      <section class="section" id="referralsSection" data-section="referrals">
+        <div class="page-heading"><div><div class="eyebrow">REFERRALS & COMMISSION</div><h1>Referrals & commission</h1><p class="heading-note">Your invite link, referral activity and commission balance.</p></div></div>
+        <article class="panel">
+          <div class="panel-head"><div><h2 class="panel-title">Your referral link</h2><p class="panel-subtitle">A referral becomes successful after the invited user purchases their first plan.</p></div></div>
+          <div class="inline-field"><input class="field mono" id="referralLink" type="text" readonly placeholder="Loading referral link…"><button class="copy-button" id="copyReferral" type="button"><svg><use href="#i-copy"/></svg> Copy</button></div>
+          <div class="mini-stat-grid">
+            <div class="mini-stat"><small>Total referrals</small><strong id="refTotal">0</strong></div>
+            <div class="mini-stat"><small>Successful</small><strong id="refSuccessful">0</strong></div>
+            <div class="mini-stat"><small>Pending</small><strong id="refPending">0</strong></div>
+          </div>
+          <p class="section-note">Pending: the invited user has not purchased a plan. Successful: the invited user has purchased their first plan. A one-time 0.05 USDT referral commission is credited after the first eligible purchase. Self-referrals and duplicate accounts are not eligible.</p>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><div><h2 class="panel-title">Commission wallet</h2><p class="panel-subtitle">Use your commission balance for an eligible plan purchase or withdrawal.</p></div></div>
+          <div class="commission-card"><div><small>Available commission</small><strong><span id="commissionBalance">0.0000</span> <small>USDT</small></strong></div><svg style="width:34px;height:34px;color:var(--accent)"><use href="#i-wallet"/></svg></div>
+          <div class="button-row"><button class="primary-button" type="button" data-go="withdraw">Withdraw commission</button><button class="secondary-button" type="button" data-go="plans">Use commission for a plan</button></div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><div><h2 class="panel-title">Referral list</h2><p class="panel-subtitle">Invited users and their status</p></div><button class="text-link" id="refreshReferrals" type="button">Refresh</button></div>
+          <div id="referralList" class="history-list"><div class="empty-state">Loading referral data…</div></div>
+        </article>
+      </section>
+
+      <section class="section" id="depositSection" data-section="deposit">
+        <div class="page-heading"><div><div class="eyebrow">ADD FUNDS</div><h1>Deposit</h1><p class="heading-note">Send USDT to the designated wallet and submit the transaction hash.</p></div></div>
+        <article class="panel form-panel">
+          <div class="panel-head"><div><h2 class="panel-title">USDT deposit</h2><p class="panel-subtitle">Confirm the network and wallet details before sending.</p></div></div>
+          <div class="security-note"><svg><use href="#i-shield"/></svg><span>Only <strong>BNB Smart Chain (BEP-20)</strong> network is supported for USDT deposits. Funds sent over another network cannot be detected in this account.</span></div>
+          <label class="form-label" for="depositWallet">Deposit wallet</label>
+          <div class="wallet-box"><code id="depositWallet">Loading wallet…</code><button class="copy-button" type="button" id="copyWallet"><svg><use href="#i-copy"/></svg> Copy</button></div>
+          <div class="info-grid">
+            <div class="info-cell"><small>Network</small><strong>BNB Smart Chain</strong></div>
+            <div class="info-cell"><small>Asset</small><strong>USDT · BEP-20</strong></div>
+            <div class="info-cell"><small>Minimum deposit</small><strong>0.10 USDT</strong></div>
+            <div class="info-cell"><small>Credit policy</small><strong>Below minimum is not credited</strong></div>
+          </div>
+          <label class="form-label" for="txidInput">Transaction hash (TxID)</label>
+          <input class="field mono" id="txidInput" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="0x…" maxlength="66">
+          <div class="button-row"><button class="primary-button" id="verifyButton" type="button"><svg><use href="#i-shield"/></svg> Verify transaction</button><button class="secondary-button" id="openExplorer" type="button">View on BscScan</button></div>
+          <div class="status-box" id="depositStatus" role="status" aria-live="polite"><div class="status-icon"></div><div class="status-text"><strong></strong><span></span></div></div>
+          <p class="panel-subtitle" style="margin-top:15px">Minimum deposit: 0.10 USDT. Deposits are credited only after on-chain confirmation and server-side validation.</p>
+        </article>
+        <div class="footer-note">Each transaction hash can be credited only once.</div>
+      </section>
+
+      <section class="section" id="withdrawSection" data-section="withdraw">
+        <div class="page-heading"><div><div class="eyebrow">WITHDRAWAL</div><h1>Withdraw</h1><p class="heading-note">Submit a withdrawal request using your wallet address.</p></div></div>
+        <article class="panel form-panel">
+          <div class="panel-head"><div><h2 class="panel-title">Withdrawal details</h2><p class="panel-subtitle">Requests are reviewed and processed manually by the administrator.</p></div></div>
+          <div class="info-grid">
+            <div class="info-cell"><small>Available balance</small><strong id="withdrawAvailable">0.0000 USDT</strong></div>
+            <div class="info-cell"><small>Network</small><strong>BNB Smart Chain</strong></div>
+            <div class="info-cell"><small>Minimum withdrawal</small><strong>0.30 USDT</strong></div>
+            <div class="info-cell"><small>Commission balance</small><strong id="withdrawCommission">0.0000 USDT</strong></div>
+          </div>
+          <form id="withdrawForm">
+            <label class="form-label" for="withdrawSource">Withdrawal source</label>
+            <select class="source-select" id="withdrawSource"><option value="main">Main balance</option><option value="commission">Commission balance</option></select>
+            <label class="form-label" for="withdrawAmount">Amount (USDT) · min. 0.30</label>
+            <input class="field" id="withdrawAmount" type="number" min="0.30" step="0.01" inputmode="decimal" placeholder="e.g. 0.30">
+            <label class="form-label" for="withdrawWallet">Your BEP-20 wallet address</label>
+            <input class="field mono" id="withdrawWallet" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="0x…" maxlength="42">
+            <div class="button-row"><button class="primary-button" id="withdrawButton" type="submit"><svg><use href="#i-arrow-up"/></svg> Submit a request</button></div>
+          </form>
+          <div class="status-box" id="withdrawStatus" role="status" aria-live="polite"><div class="status-icon"></div><div class="status-text"><strong></strong><span></span></div></div>
+          <div class="security-note" style="margin-top:17px"><svg><use href="#i-alert"/></svg><span>Minimum withdrawal: 0.30 USDT. The selected balance is reserved while the request is pending. It is deducted after payment is confirmed and released if the request is rejected.</span></div>
+        </article>
+      </section>
+
+      <section class="section" id="historySection" data-section="history">
+        <div class="page-heading"><div><div class="eyebrow">ACCOUNT RECORDS</div><h1>Transaction history</h1><p class="heading-note">Records of your deposits and withdrawal requests.</p></div></div>
+        <article class="panel"><div class="panel-head"><div><h2 class="panel-title">Recent activity</h2><p class="panel-subtitle">Latest 20 records</p></div><button class="text-link" id="refreshHistory" type="button">Refresh</button></div><div id="historyList" class="history-list"><div class="empty-state">Loading records…</div></div></article>
+      </section>
+
+      <section class="section" id="termsSection" data-section="terms">
+        <div class="page-heading"><div><div class="eyebrow">TERMS & CONDITIONS</div><h1>Terms & risk disclosure</h1><p class="heading-note">Rules for using the service, deposits, plans, referrals and withdrawals.</p></div></div>
+        <article class="panel terms-copy">
+          <div class="risk-banner" style="margin:0 0 16px"><svg><use href="#i-alert"/></svg><span><strong>Risk notice:</strong> Trading involves a risk of loss. No profit or daily return is guaranteed. Market conditions can reduce or eliminate the value of deposited funds.</span></div>
+          <h3>1. Trading and market risk</h3>
+          <p>Deposited funds may be used in live market trading. Digital asset prices can move rapidly, and you may lose part or all of your capital. Past performance does not predict future results.</p>
+          <h3>2. Plans and term</h3>
+          <p>Each plan has a 10-day term. The plan amount represents allocated capital and does not guarantee profit, interest, commission or return of principal. Each plan is tracked separately and summarized in your account.</p>
+          <h3>3. Profit calculation and claims</h3>
+          <p>Profit is not generated at a fixed or guaranteed rate. Only positive trading results verified and recorded by the administrator become eligible for a claim. A user may claim available verified profit once per 24-hour interval. Unverified estimates are not payable or withdrawable funds.</p>
+          <h3>4. Deposits</h3>
+          <p>The minimum deposit is 0.10 USDT. Deposits below this amount are not credited. Only the designated BNB Smart Chain (BEP-20) network is supported. Assets sent to the wrong network or address may not be recoverable.</p>
+          <h3>5. Withdrawals</h3>
+          <p>The minimum withdrawal is 0.30 USDT. Requests are subject to review and manual processing. Make sure the wallet address is correct before submitting a request.</p>
+          <h3>6. Referrals and commission</h3>
+          <p>When an invited user purchases their first eligible plan, the referring account receives a one-time 0.05 USDT commission after server verification. Self-referrals, duplicate accounts and fraudulent activity are not eligible. Commission can be used for an eligible plan purchase or withdrawn when the minimum withdrawal requirement is met.</p>
+          <h3>7. Balances and records</h3>
+          <p>Account balances and activity are based on server records. Network delays, invalid transaction hashes, verification failures or technical issues may delay updates. The server record is authoritative for deposits, plan purchases, commissions and withdrawals.</p>
+          <h3>8. User responsibilities</h3>
+          <p>Understand the risks, fees, limits and terms before using the service. Do not use borrowed funds or funds you cannot afford to lose. You are responsible for complying with the laws and financial regulations applicable in your location.</p>
+          <h3>9. Changes to these terms</h3>
+          <p>These terms may be updated for security, legal or operational reasons. Continued use of the service after updated terms are published constitutes acceptance of the revised terms.</p>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <nav class="bottom-nav" id="bottomNav" style="display:none" aria-label="Main navigation">
+    <div class="nav-inner">
+      <button class="nav-button active" data-tab="overview" type="button"><svg><use href="#i-grid"/></svg><span>Overview</span></button>
+      <button class="nav-button" data-tab="plans" type="button"><svg><use href="#i-trending"/></svg><span>Plans</span></button>
+      <button class="nav-button" data-tab="deposit" type="button"><svg><use href="#i-arrow-down"/></svg><span>Deposit</span></button>
+      <button class="nav-button" data-tab="withdraw" type="button"><svg><use href="#i-arrow-up"/></svg><span>Withdraw</span></button>
+      <button class="nav-button" data-tab="referrals" type="button"><svg><use href="#i-users"/></svg><span>Referrals</span></button>
+      <button class="nav-button" data-tab="history" type="button"><svg><use href="#i-clock"/></svg><span>History</span></button>
+      <button class="nav-button" data-tab="terms" type="button"><svg><use href="#i-file"/></svg><span>Terms</span></button>
+    </div>
+  </nav>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      'use strict';
+      const tg = window.Telegram && window.Telegram.WebApp;
+      const $ = (id) => document.getElementById(id);
+      const state = { user: null, history: [], currentTab: 'overview', checking: false, lastTxid: '', plans: [], referrals: [], planSummary: null };
+      const money = (value) => String(value ?? '0.0000');
+      const PLAN_AMOUNTS = [0.10, 0.20, 0.50, 1, 1.50, 2, 3, 5, 8, 10, 13, 15, 18, 20];
+      const formatMoney = (value) => Number(String(value ?? '0').replace(/,/g, '') || 0).toFixed(4);
+      function safeText(value) { return escapeHtml(String(value ?? '—')); }
+      function setText(id, value) { const node = $(id); if (node) node.textContent = value; }
+
+      const shortRef = (value) => {
+        if (!value) return '—';
+        const text = String(value);
+        return text.length > 20 ? text.slice(0, 10) + '…' + text.slice(-7) : text;
+      };
+      let toastTimer;
+      function toast(message) {
+        const element = $('toast');
+        element.textContent = message;
+        element.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => element.classList.remove('show'), 2300);
+      }
+      function setStatus(id, kind, title, detail, loading = false) {
+        const box = $(id);
+        box.className = 'status-box show ' + kind;
+        const icon = box.querySelector('.status-icon');
+        icon.innerHTML = loading ? '<div class="spinner"></div>' : (kind === 'success'
+          ? '<svg style="width:18px;height:18px;color:var(--success)"><use href="#i-check"/></svg>'
+          : '<svg style="width:18px;height:18px;color:' + (kind === 'error' ? 'var(--danger)' : 'var(--warning)') + '"><use href="#i-alert"/></svg>');
+        box.querySelector('.status-text strong').textContent = title;
+        box.querySelector('.status-text span').textContent = detail;
+      }
+      function clearStatus(id) { $(id).className = 'status-box'; }
+      async function api(path, options = {}) {
+        const response = await fetch(path, {
+          ...options,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Telegram-Init-Data': tg ? tg.initData : '',
+            ...(options.headers || {})
+          }
+        });
+        let data;
+        try { data = await response.json(); } catch (_) { data = {}; }
+        if (!response.ok) throw new Error(data.error || data.message || 'Unable to connect to the server.');
+        return data;
+      }
+      function showTab(name) {
+        state.currentTab = name;
+        document.querySelectorAll('.section').forEach(section => section.classList.toggle('active', section.dataset.section === name));
+        document.querySelectorAll('.nav-button').forEach(button => button.classList.toggle('active', button.dataset.tab === name));
+        if (tg && typeof tg.HapticFeedback?.selectionChanged === 'function') tg.HapticFeedback.selectionChanged();
+        if (name === 'history') loadHistory();
+        if (name === 'plans') { renderPlanOptions(); loadPlans(); loadAdminPlans(); }
+        if (name === 'referrals') loadReferrals();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      function renderHistory(items, targetId) {
+        const target = $(targetId);
+        if (!items || items.length === 0) {
+          target.innerHTML = '<div class="empty-state"><svg><use href="#i-empty"/></svg>No transactions recorded yet.</div>';
+          return;
+        }
+        target.innerHTML = items.map(item => {
+          const deposit = item.kind === 'deposit';
+          const status = item.status === 'pending' ? 'Processing' : item.status === 'paid' ? 'Completed' : item.status === 'rejected' ? 'Rejected' : 'Verified';
+          const icon = deposit ? '#i-arrow-down' : '#i-arrow-up';
+          const sign = deposit ? '+' : '−';
+          const ref = deposit ? item.reference : item.reference;
+          return `<div class="history-item">
+            <div class="history-left"><span class="history-icon ${deposit ? '' : 'withdraw'}"><svg><use href="${icon}"/></svg></span>
+              <div style="min-width:0"><div class="history-name">${deposit ? 'USDT deposit' : 'Withdrawal request'}</div><div class="history-ref">${escapeHtml(shortRef(ref))}</div></div>
+            </div>
+            <div class="history-right"><div class="history-amount">${sign}${escapeHtml(money(item.amount))} USDT</div><div class="history-status">${status}</div></div>
+          </div>`;
+        }).join('');
+      }
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
+      }
+      async function loadDashboard() {
+        const [user, history] = await Promise.all([api('/api/me'), api('/api/history')]);
+        state.user = user;
+        state.history = history.items || [];
+        $('balanceValue').textContent = money(user.balance);
+        $('availableValue').textContent = money(user.available) + ' USDT';
+        $('assetBalance').textContent = money(user.balance);
+        $('reservedBalance').textContent = money(user.reserved);
+        $('withdrawAvailable').textContent = money(user.available) + ' USDT';
+        $('depositWallet').textContent = user.wallet;
+        setText('commissionBalance', formatMoney(user.commission_balance));
+        setText('withdrawCommission', formatMoney(user.commission_available ?? user.commission_balance) + ' USDT');
+        renderHistory(state.history.slice(0, 3), 'recentActivity');
+        renderHistory(state.history, 'historyList');
+        const userName = tg?.initDataUnsafe?.user?.first_name || 'CP';
+        $('profileInitials').textContent = userName.trim().slice(0, 2).toUpperCase();
+      }
+      async function loadHistory() {
+        try {
+          const data = await api('/api/history');
+          state.history = data.items || [];
+          renderHistory(state.history, 'historyList');
+        } catch (error) { toast(error.message); }
+      }
+      async function copyWallet() {
+        const address = state.user?.wallet || $('depositWallet').textContent;
+        try {
+          if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(address);
+          else {
+            const input = document.createElement('textarea'); input.value = address; document.body.appendChild(input); input.select(); document.execCommand('copy'); input.remove();
+          }
+          toast('Wallet address copied.');
+          if (tg && typeof tg.HapticFeedback?.notificationOccurred === 'function') tg.HapticFeedback.notificationOccurred('success');
+        } catch (_) { toast('Could not copy. Please copy the address manually.'); }
+      }
+      const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+      async function verifyDeposit() {
+        if (state.checking) return;
+        const txid = $('txidInput').value.trim();
+        if (!/^0x[a-fA-F0-9]{64}$/.test(txid)) {
+          setStatus('depositStatus', 'error', 'Invalid transaction hash', 'Enter a 66-character transaction hash beginning with 0x.');
+          return;
+        }
+        state.checking = true; state.lastTxid = txid;
+        $('verifyButton').disabled = true;
+        $('verifyButton').innerHTML = '<div class="spinner"></div> Verifying';
+        setStatus('depositStatus', 'pending', 'Verifying on blockchain', 'Checking the transaction and network confirmations.', true);
+        try {
+          let result;
+          for (let attempt = 0; attempt < 20; attempt++) {
+            result = await api('/api/deposits/verify', { method: 'POST', body: JSON.stringify({ txid }) });
+            if (result.status === 'pending') {
+              const count = Number(result.confirmations || 0);
+              const required = Number(result.required_confirmations || state.user?.min_confirmations || 12);
+              const detail = count > 0 ? `Confirmations ${count} / ${required}। Please wait for confirmation.` : result.message;
+              setStatus('depositStatus', 'pending', 'Transaction processing', detail, true);
+              await sleep(2800);
+              continue;
+            }
+            if (result.status === 'not_found') {
+              setStatus('depositStatus', 'pending', 'Looking up transaction', result.message, true);
+              await sleep(2800);
+              continue;
+            }
+            if (result.status === 'below_minimum' || result.status === 'minimum_not_met') {
+              setStatus('depositStatus', 'error', 'Minimum deposit not met', 'Minimum deposit is 0.10 USDT. This transaction has not been credited.');
+              return;
+            }
+            break;
+          }
+          if (!result || result.status === 'pending' || result.status === 'not_found') {
+            setStatus('depositStatus', 'pending', 'Verification is still pending', 'The transaction may still be processing. Try the same hash again shortly.');
+          } else if (result.status === 'success' || result.status === 'already_credited') {
+            setStatus('depositStatus', 'success', result.status === 'success' ? 'Deposit successful' : 'Already credited', `${result.amount} USDT · Current balance ${result.balance} USDT`);
+            await loadDashboard();
+            if (result.status === 'success' && tg && typeof tg.HapticFeedback?.notificationOccurred === 'function') tg.HapticFeedback.notificationOccurred('success');
+          } else {
+            setStatus('depositStatus', 'error', 'Verification failed', result.message || 'The transaction was not accepted.');
+          }
+        } catch (error) {
+          setStatus('depositStatus', 'error', 'Verification error', error.message || 'Please try again shortly.');
+        } finally {
+          state.checking = false;
+          $('verifyButton').disabled = false;
+          $('verifyButton').innerHTML = '<svg><use href="#i-shield"/></svg> Verify again';
+        }
+      }
+      function renderPlanOptions() {
+        const grid = $('plansGrid');
+        if (!grid) return;
+        grid.innerHTML = PLAN_AMOUNTS.map((amount, index) => `
+          <article class="plan-card">
+            <div class="plan-card-top"><span class="plan-card-label">PLAN ${String(index + 1).padStart(2, '0')}</span><svg aria-hidden="true"><use href="#i-trending"/></svg></div>
+            <div class="plan-amount">${amount.toFixed(2)} <small>USDT</small></div>
+            <div class="plan-meta">
+              <div class="plan-meta-row"><span>Plan term</span><strong>10 days</strong></div>
+              <div class="plan-meta-row"><span>Claim cycle</span><strong>24 hours</strong></div>
+            </div>
+            <p class="plan-card-note">Only verified trading profit can be claimed. Results may vary.</p>
+            <button class="plan-buy" type="button" data-buy-plan="${amount.toFixed(2)}">Choose plan</button>
+          </article>`).join('');
+        grid.querySelectorAll('[data-buy-plan]').forEach(button => {
+          button.addEventListener('click', () => buyPlan(Number(button.dataset.buyPlan), button));
+        });
+      }
+
+      function renderMyPlans(items) {
+        const target = $('myPlansList');
+        if (!target) return;
+        if (!Array.isArray(items) || items.length === 0) {
+          setText('planTotalCapital', '0.0000 USDT');
+          setText('planTotalPnl', 'Awaiting verified results');
+          target.innerHTML = '<div class="empty-state"><svg><use href="#i-empty"/></svg>You have not purchased a plan yet.</div>';
+          return;
+        }
+        const totalCapital = items.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        const pnlItems = items.filter(item => item.realized_pnl !== undefined && item.realized_pnl !== null);
+        const totalPnl = pnlItems.reduce((sum, item) => sum + Number(String(item.realized_pnl || 0).replace(/,/g, '')), 0);
+        setText('planTotalCapital', formatMoney(totalCapital) + ' USDT');
+        setText('planTotalPnl', pnlItems.length ? `${totalPnl >= 0 ? '+' : ''}${formatMoney(totalPnl)} USDT` : 'Awaiting verified results');
+        target.innerHTML = items.map(item => {
+          const statusText = item.status === 'active' ? 'Active' : item.status === 'completed' ? 'Completed' : item.status === 'cancelled' ? 'Rejected' : safeText(item.status || 'Processing');
+          const statusClass = item.status === 'active' || item.status === 'completed' ? 'success' : 'pending';
+          const amount = formatMoney(item.amount);
+          const start = item.started_at ? safeText(item.started_at) : '—';
+          const end = item.ends_at ? safeText(item.ends_at) : '—';
+          const result = `${formatMoney(item.claimed_profit ?? item.realized_pnl ?? 0)} USDT`;
+          const unclaimed = `${formatMoney(item.unclaimed_profit ?? 0)} USDT`;
+          return `<div class="history-item"><div class="history-left"><span class="history-icon"><svg><use href="#i-trending"/></svg></span><div style="min-width:0"><div class="history-name">Plan #${item.id} · ${amount} USDT</div><div class="history-ref">Started: ${start} · Ends: ${end}</div><div class="history-ref">Profit claimed: ${result} · Awaiting claim: ${unclaimed}</div></div></div><span class="pill-status ${statusClass}">${statusText}</span></div>`;
+        }).join('');
+      }
+
+      function renderClaimSummary(data) {
+        state.planSummary = data;
+        setText('claimableProfit', formatMoney(data.claimable_profit || 0));
+        const button = $('claimProfitButton');
+        const label = $('claimWindowText');
+        if (!button || !label) return;
+        button.disabled = !data.can_claim;
+        if (data.can_claim) label.textContent = 'Verified trading profit is available to claim.';
+        else if (Number(data.unclaimed_profit || 0) > 0 && data.next_claim_at) label.textContent = `Next claim window: ${data.next_claim_at} UTC`;
+        else label.textContent = 'No verified trading profit is available yet.';
+      }
+
+      async function loadAdminPlans() {
+        const panel = $('adminProfitPanel');
+        if (!panel) return;
+        try {
+          const data = await api('/api/admin/plans');
+          panel.hidden = false;
+          const select = $('adminPlanSelect');
+          const items = data.items || [];
+          select.innerHTML = items.length
+            ? items.map(item => `<option value="${Number(item.plan_id)}">Plan #${Number(item.plan_id)} · User #${Number(item.user_id)} · ${safeText(item.amount)} USDT · ${safeText(item.status)}</option>`).join('')
+            : '<option value="">No plans found</option>';
+        } catch (_) {
+          panel.hidden = true;
+        }
+      }
+
+      async function recordAdminProfit() {
+        const button = $('recordProfitButton');
+        const planId = $('adminPlanSelect').value;
+        const amount = $('adminProfitAmount').value.trim();
+        const periodKey = $('adminPeriodKey').value.trim();
+        if (!planId || !amount || !periodKey) {
+          setStatus('adminProfitStatus', 'error', 'Missing information', 'Select a plan and enter a verified profit amount and unique period key.');
+          return;
+        }
+        button.disabled = true;
+        button.textContent = 'Recording…';
+        try {
+          const result = await api('/api/admin/plan-profit', {
+            method: 'POST',
+            body: JSON.stringify({ plan_id: Number(planId), amount, period_key: periodKey })
+          });
+          setStatus('adminProfitStatus', 'success', 'Profit recorded', `${result.amount} USDT is now available for the user to claim, subject to the 24-hour claim interval.`);
+          $('adminProfitAmount').value = '';
+          await loadPlans();
+        } catch (error) {
+          setStatus('adminProfitStatus', 'error', 'Could not record profit', error.message);
+        } finally {
+          button.disabled = false;
+          button.textContent = 'Record profit';
+        }
+      }
+
+      async function claimProfit() {
+        const button = $('claimProfitButton');
+        if (!button || button.disabled) return;
+        button.disabled = true;
+        button.textContent = 'Processing…';
+        try {
+          const result = await api('/api/profits/claim', { method: 'POST', body: JSON.stringify({}) });
+          toast(`${result.amount} USDT credited to your balance.`);
+          await Promise.all([loadDashboard(), loadPlans()]);
+        } catch (error) {
+          toast(error.message || 'Unable to claim profit.');
+          await loadPlans();
+        } finally {
+          button.textContent = 'Claim profit';
+        }
+      }
+
+      async function loadPlans() {
+        try {
+          const data = await api('/api/plans');
+          state.plans = data.items || data.active_plans || [];
+          renderMyPlans(state.plans);
+          renderClaimSummary(data);
+        } catch (error) {
+          $('myPlansList').innerHTML = `<div class="empty-state">Could not load plan data from the server. Please check the backend deployment.<br>${safeText(error.message)}</div>`;
+        }
+      }
+
+      async function buyPlan(amount, button) {
+        if (!Number.isFinite(amount) || amount <= 0) return;
+        const normalizedSource = $('planPurchaseSource').value;
+        if (!window.confirm(`Purchase the ${amount.toFixed(2)} USDT plan for a 10-day term? Trading results are variable and losses are possible.`)) return;
+        button.disabled = true;
+        const oldText = button.textContent;
+        button.textContent = 'Processing…';
+        try {
+          const result = await api('/api/plans/purchase', {
+            method: 'POST',
+            body: JSON.stringify({ amount: amount.toFixed(2), source: normalizedSource })
+          });
+          toast(`Plan #${result.plan_id} activated · ${result.amount} USDT · 10-day term`);
+          await Promise.all([loadDashboard(), loadPlans()]);
+        } catch (error) {
+          toast(error.message || 'Unable to purchase plan.');
+        } finally {
+          button.disabled = false;
+          button.textContent = oldText;
+        }
+      }
+
+      function renderReferrals(data) {
+        setText('refTotal', String(data.total ?? 0));
+        setText('refSuccessful', String(data.successful ?? 0));
+        setText('refPending', String(data.pending ?? 0));
+        if (data.referral_link) $('referralLink').value = String(data.referral_link);
+        setText('commissionBalance', formatMoney(data.commission_available ?? state.user?.commission_available ?? data.commission_balance ?? state.user?.commission_balance));
+        setText('withdrawCommission', formatMoney(data.commission_available ?? state.user?.commission_available ?? data.commission_balance ?? state.user?.commission_balance) + ' USDT');
+        const target = $('referralList');
+        const items = data.items || [];
+        if (!items.length) {
+          target.innerHTML = '<div class="empty-state"><svg><use href="#i-users"/></svg>No referrals yet.</div>';
+          return;
+        }
+        target.innerHTML = items.map(item => {
+          const successful = Boolean(item.plan_purchased);
+          const status = successful ? 'Successful' : 'Pending';
+          const klass = successful ? 'success' : 'pending';
+          const name = safeText(item.name || item.username || ('User #' + (item.user_id ?? '—')));
+          const date = safeText(item.joined_at || item.created_at || '');
+          const plan = item.plan_purchased ? 'First plan purchased · commission awarded' : 'Awaiting first plan purchase';
+          return `<div class="referral-row"><div style="min-width:0"><div class="referral-name">${name}</div><div class="referral-detail">${date} · ${plan}</div></div><span class="pill-status ${klass}">${status}</span></div>`;
+        }).join('');
+      }
+
+      async function loadReferrals() {
+        try {
+          const data = await api('/api/referrals');
+          renderReferrals(data);
+        } catch (error) {
+          $('referralList').innerHTML = `<div class="empty-state">Could not load referral data. Please check the backend deployment.<br>${safeText(error.message)}</div>`;
+        }
+      }
+
+      async function copyReferral() {
+        const link = $('referralLink').value.trim();
+        if (!link) { toast('Referral link is not available yet.'); return; }
+        try {
+          if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(link);
+          else {
+            const input = document.createElement('textarea');
+            input.value = link; document.body.appendChild(input); input.select();
+            document.execCommand('copy'); input.remove();
+          }
+          toast('Referral link copied.');
+        } catch (_) { toast('Could not copy the link.'); }
+      }
+
+      async function submitWithdrawal(event) {
+        event.preventDefault();
+        const amount = $('withdrawAmount').value.trim();
+        const wallet = $('withdrawWallet').value.trim();
+        if (!amount || !Number.isFinite(Number(amount)) || Number(amount) < 0.30) { setStatus('withdrawStatus', 'error', 'Below minimum', 'Minimum withdrawal is 0.30 USDT.'); return; }
+        const source = $('withdrawSource').value;
+        if (!/^0x[a-fA-F0-9]{40}$/.test(wallet)) { setStatus('withdrawStatus', 'error', 'Invalid wallet address', 'Enter a valid BEP-20 wallet address.'); return; }
+        $('withdrawButton').disabled = true;
+        $('withdrawButton').innerHTML = '<div class="spinner"></div> Submitting…';
+        clearStatus('withdrawStatus');
+        try {
+          const result = await api('/api/withdrawals', { method: 'POST', body: JSON.stringify({ amount, wallet, source }) });
+          setStatus('withdrawStatus', 'success', 'Request submitted', `Request #${result.request_id} · ${result.message}`);
+          $('withdrawForm').reset();
+          await loadDashboard();
+        } catch (error) {
+          setStatus('withdrawStatus', 'error', 'Request not submitted', error.message);
+        } finally {
+          $('withdrawButton').disabled = false;
+          $('withdrawButton').innerHTML = '<svg><use href="#i-arrow-up"/></svg> Submit a request';
+        }
+      }
+      function boot() {
+        if (!tg || !tg.initData) {
+          $('telegramGate').classList.add('show');
+          return;
+        }
+        tg.ready();
+        tg.expand();
+        if (tg.setHeaderColor) tg.setHeaderColor('#0b1220');
+        if (tg.setBackgroundColor) tg.setBackgroundColor('#0b1220');
+        $('appShell').style.display = 'block';
+        $('bottomNav').style.display = 'flex';
+        document.querySelectorAll('[data-tab]').forEach(button => button.addEventListener('click', () => showTab(button.dataset.tab)));
+        document.querySelectorAll('[data-go]').forEach(button => button.addEventListener('click', () => showTab(button.dataset.go)));
+        $('copyWallet').addEventListener('click', copyWallet);
+        $('copyReferral').addEventListener('click', copyReferral);
+        $('refreshPlans').addEventListener('click', loadPlans);
+        $('claimProfitButton').addEventListener('click', claimProfit);
+        $('recordProfitButton').addEventListener('click', recordAdminProfit);
+        $('refreshReferrals').addEventListener('click', loadReferrals);
+        renderPlanOptions();
+        $('verifyButton').addEventListener('click', verifyDeposit);
+        $('withdrawForm').addEventListener('submit', submitWithdrawal);
+        $('refreshHistory').addEventListener('click', loadHistory);
+        $('openExplorer').addEventListener('click', () => {
+          const txid = $('txidInput').value.trim();
+          if (!/^0x[a-fA-F0-9]{64}$/.test(txid)) { toast('Enter a valid transaction hash first.'); return; }
+          const url = 'https://bscscan.com/tx/' + encodeURIComponent(txid);
+          if (tg?.openLink) tg.openLink(url); else window.open(url, '_blank', 'noopener');
+        });
+        loadDashboard().catch(error => {
+          setStatus('depositStatus', 'error', 'Account could not be loaded', error.message);
+          toast(error.message);
+        });
+      }
+      boot();
+    })();
+  </script>
+</body>
+</html>
